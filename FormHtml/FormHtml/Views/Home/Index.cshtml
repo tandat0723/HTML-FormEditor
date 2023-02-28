@@ -1,0 +1,177 @@
+﻿
+<br />
+@(Html.DevExtreme().HtmlEditor()
+    .ID("html_editor")
+    .Value(new JS("markup"))
+    .Height(675)
+    .ImageUpload(imageUpload => imageUpload.Tabs(
+        tabs =>
+        {
+            tabs.Add().Name(HtmlEditorImageUploadTab.File);
+            tabs.Add().Name(HtmlEditorImageUploadTab.Url);
+        })
+    )
+    
+    .Toolbar(toolbar => toolbar.Items(
+        items => {
+            items.Add().Name(HtmlEditorToolbarItem.Undo);
+
+            items.Add().Name(HtmlEditorToolbarItem.Redo);
+
+            items.Add().Name(HtmlEditorToolbarItem.Separator);
+
+            items.Add()
+                .Name("size")
+                .AcceptedValues(new[] { "8pt", "10pt", "12pt", "14pt", "18pt", "24pt", "36pt" });
+
+            items.Add()
+                .Name("font")
+                .AcceptedValues(new[] { "Arial", "Courier New", "Georgia", "Impact", "Lucida Console", "Tahoma", "Times New Roman", "Verdana" });
+
+            items.Add().Name(HtmlEditorToolbarItem.Separator);
+
+            items.Add().Name(HtmlEditorToolbarItem.Bold);
+
+            items.Add().Name(HtmlEditorToolbarItem.Italic);
+
+            items.Add().Name(HtmlEditorToolbarItem.Strike);
+
+            items.Add().Name(HtmlEditorToolbarItem.Underline);
+
+            items.Add().Name(HtmlEditorToolbarItem.Separator);
+
+            items.Add().Name(HtmlEditorToolbarItem.AlignLeft);
+
+            items.Add().Name(HtmlEditorToolbarItem.AlignCenter);
+
+            items.Add().Name(HtmlEditorToolbarItem.AlignRight);
+
+            items.Add().Name(HtmlEditorToolbarItem.AlignJustify);
+
+            items.Add().Name(HtmlEditorToolbarItem.Separator);
+
+            items.Add().Name(HtmlEditorToolbarItem.OrderedList);
+
+            items.Add().Name(HtmlEditorToolbarItem.BulletList);
+
+            items.Add().Name(HtmlEditorToolbarItem.Separator);
+
+            items.Add()
+                .Name("header")
+                .AcceptedValues(new JS("[false, 1, 2, 3, 4, 5]"));
+
+            items.Add().Name(HtmlEditorToolbarItem.Separator);
+
+            items.Add().Name(HtmlEditorToolbarItem.Color);
+
+            items.Add().Name(HtmlEditorToolbarItem.Background);
+
+            items.Add().Name(HtmlEditorToolbarItem.Separator);
+
+            items.Add().Name(HtmlEditorToolbarItem.Link);
+
+            items.Add().Name(HtmlEditorToolbarItem.Image);
+
+            items.Add().Name(HtmlEditorToolbarItem.Separator);
+
+            items.Add().Name(HtmlEditorToolbarItem.Clear);
+
+            items.Add().Name(HtmlEditorToolbarItem.CodeBlock);
+
+            items.Add().Name(HtmlEditorToolbarItem.Blockquote);
+
+            items.Add().Name(HtmlEditorToolbarItem.Separator);
+
+            items.Add().Name(HtmlEditorToolbarItem.InsertTable);
+
+            items.Add().Name(HtmlEditorToolbarItem.DeleteTable);
+
+            items.Add().Name(HtmlEditorToolbarItem.InsertRowAbove);
+
+            items.Add().Name(HtmlEditorToolbarItem.InsertRowBelow);
+
+            items.Add().Name(HtmlEditorToolbarItem.DeleteRow);
+
+            items.Add().Name(HtmlEditorToolbarItem.InsertColumnLeft);
+
+            items.Add().Name(HtmlEditorToolbarItem.InsertColumnRight);
+
+            items.Add().Name(HtmlEditorToolbarItem.DeleteColumn);
+
+        })
+    )
+    .MediaResizing(m => m.Enabled(true))
+
+)
+
+@(Html.DevExtreme().Toast()
+                   .ID("toast")
+                   .DisplayTime(1000)
+                 )
+<br />
+<div class="buttons">
+    @(Html.DevExtreme().Button()
+                        .ID("button")
+                        .Text("Lưu")
+                        .Type(ButtonType.Default)
+                        .StylingMode(ButtonStylingMode.Contained)
+                        .Width(120)
+                        .OnClick("SaveData")
+
+                    )
+</div>
+
+<script>
+    
+
+    function Insert() {
+        var editorInstance = $("#html_editor").dxHtmlEditor("instance");
+        var htmlValue = editorInstance.option("value");
+
+        $.ajax({
+            url: "/Home/Insert",
+            type: "POST",
+            dataType: "json",
+            data: {
+                TEXT: htmlValue
+            },
+            success: function () {
+                console.log(htmlValue);
+                showSuccess("Lưu thông tin thành công!")
+            },
+            error: function () {
+                showError("Lưu thông tin không thành công");
+            }
+        });
+    };
+
+    function SaveData() {
+        var editorInstance = $("#html_editor").dxHtmlEditor("instance");
+        var htmlValue = editorInstance.option("value");
+
+        if (htmlValue == null || htmlValue == "") {
+            showError("Không được để trống. Vui lòng nhập thông tin.")
+
+        } else {
+            Insert();
+        }
+    }
+
+    function showError(s) {
+        $("#toast").dxToast("instance").option({
+            type: 'error',
+            message: s,
+            visible: true
+        });
+    }
+
+    function showSuccess(s) {
+        $("#toast").dxToast("instance").option({
+            type: 'success',
+            message: s,
+            visible: true
+        });
+    }
+
+    var markup = `<p>Tan Dat</p>`;
+</script>
